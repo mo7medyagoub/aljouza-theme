@@ -571,11 +571,9 @@ salla-product-card.s-product-card-entry {
   }
 }
 
-// ── 4. Content area — transparent glass background fix ───────
-// Override base product-entry white bg that bleeds into content
+// ── 4. Glass background fix ──────────────────────────────────
 custom-salla-product-card.s-product-card-entry,
 salla-product-card.s-product-card-entry {
-  // Kill the white bg that comes from .product-entry base style
   background-color: transparent !important;
 
   .s-product-card-content {
@@ -584,123 +582,163 @@ salla-product-card.s-product-card-entry {
   }
 }
 
-// ── 4a. Content layout — Title ↔ Price side by side ─────────
+// ── 4a. Image — full bleed at top, rounded bottom corners ───
+custom-salla-product-card.s-product-card-entry .s-product-card-image,
+salla-product-card.s-product-card-entry .s-product-card-image {
+  padding: 0 !important;
+  margin: 0;
+  overflow: hidden;
+
+  a {
+    display: block;
+    overflow: hidden;
+    border-radius: 0; // image fills card top edge
+
+    img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      border-radius: 0;
+      transition: transform 0.40s ease;
+    }
+  }
+
+  &:hover a img { transform: scale(1.04); }
+}
+
+// ── 4b. Content — row layout: [title RIGHT] [price LEFT] ─────
 custom-salla-product-card.s-product-card-entry .s-product-card-content,
 salla-product-card.s-product-card-entry .s-product-card-content {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 14px 14px 14px;
-  gap: 12px;
+  flex-direction: row;   // RTL: first child → RIGHT, second → LEFT
+  flex-wrap: wrap;       // footer wraps to its own line
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 14px 0;
   background: transparent !important;
 
-  // ── Title + Price row ──────────────────────────────────────
+  // ── Title: right side (RTL-start), accent bar ─────────────
   .s-product-card-content-main {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    flex-direction: row-reverse; // RTL: title on right, price on left
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: nowrap;
+    align-items: center;
+    align-self: center;
+    // Accent vertical bar on the inline-start side (right in RTL)
+    border-inline-start: 3px solid var(--color-primary);
+    padding-inline-start: 10px;
 
-    // Title — pill with subtle glass background
     .s-product-card-content-title {
-      flex: 1;
+      // Plain text — no glass pill
       font-weight: 700;
-      line-height: 1.3;
+      font-size: 0.95rem;
+      line-height: 1.35;
+      color: var(--main-text-color, #231f1e);
       word-break: break-word;
-
-      // Pill background wrapper
-      display: inline-flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      border-radius: 12px;
-      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+      backdrop-filter: none;
       width: 100%;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.60);
+      display: block;
 
       a {
         text-decoration: none;
-        color: var(--main-text-color, #231f1e);
-        transition: color 0.2s ease;
-        font-size: 0.95rem;
+        color: inherit;
+        transition: color 0.2s;
         &:hover { color: var(--color-primary); }
       }
     }
+
+    .s-product-card-content-subtitle { display: none; }
   }
 
-  // ── Price block — sits opposite the title ─────────────────
+  // ── Price: left side (RTL-end), solid pill ─────────────────
   .s-product-card-content-sub {
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    margin: 0;
-    padding: 0;
-  }
-
-  // Current price
-  .s-product-card-price,
-  .s-product-card-sale-price h4,
-  .s-product-card-starting-price h4 {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--main-text-color, #231f1e);
-    line-height: 1.2;
-  }
-
-  // Old / crossed price
-  .s-product-card-sale-price {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-
-    h4 { // current sale price
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--main-text-color, #231f1e) !important;
-    }
-
-    span { // old crossed price
-      font-size: 0.8rem;
-      font-weight: 400;
-      opacity: 0.45;
-      text-decoration: line-through;
-    }
-  }
-
-  // Rating
-  .s-product-card-rating {
-    display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.8rem;
+
+    // Current price — solid pill
+    .s-product-card-price,
+    .s-product-card-sale-price h4,
+    .s-product-card-starting-price h4 {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-primary) !important;
+      color: #fff !important;
+      font-weight: 800;
+      font-size: 0.95rem;
+      line-height: 1;
+      padding: 8px 14px;
+      border-radius: 12px;
+      white-space: nowrap;
+      box-shadow: 0 3px 10px rgb(0 0 0 / 0.12);
+    }
+
+    // Sale price wrapper — column: pill on top, crossed below
+    .s-product-card-sale-price {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+
+      h4 { // ← already styled above as pill
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-primary) !important;
+        color: #fff !important;
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 8px 14px;
+        border-radius: 12px;
+        white-space: nowrap;
+        box-shadow: 0 3px 10px rgb(0 0 0 / 0.12);
+      }
+
+      span { // crossed old price
+        font-size: 0.78rem;
+        font-weight: 400;
+        color: #e05252;
+        text-decoration: line-through;
+        opacity: 0.75;
+      }
+    }
+
+    .s-product-card-rating {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.78rem;
+      margin-top: 2px;
+    }
   }
 
-  // Subtitle — hidden to keep card clean
-  .s-product-card-content-subtitle {
-    display: none;
+  // Footer: wraps to full-width line below title+price row
+  .s-product-card-content-footer {
+    flex: 0 0 100%;
+    width: 100%;
   }
 }
 
-// ── 5. CTA Button — full width, solid color, interactive ─────
+// ── 5. CTA Button — full width, solid primary, interactive ───
 custom-salla-product-card.s-product-card-entry .s-product-card-content-footer,
 salla-product-card.s-product-card-entry .s-product-card-content-footer {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin: 0;
-  padding: 0 14px 14px;
+  display: block;
+  padding: 10px 14px 14px;
+  width: 100%;
 
   salla-add-product-button {
-    flex: 1;
+    display: block;
     width: 100%;
 
-    // Light DOM (.s-button inside custom-salla-product-card)
+    // Light DOM
     .s-button,
     button {
       width: 100% !important;
@@ -708,50 +746,43 @@ salla-product-card.s-product-card-entry .s-product-card-content-footer {
       align-items: center;
       justify-content: center;
       gap: 8px;
-      // ▶ Generous vertical padding as requested
       padding: 14px 20px !important;
       background: var(--color-primary) !important;
       color: #fff !important;
       font-weight: 600;
       font-size: 0.9rem;
       border-radius: 14px !important;
-      border: 2px solid transparent !important;
-      box-shadow: 0 4px 16px rgb(0 0 0 / 0.15) !important;
+      border: none !important;
+      outline: none;
+      box-shadow: 0 4px 16px rgb(0 0 0 / 0.14) !important;
+      cursor: pointer;
       transition:
         background 0.22s ease,
-        color 0.22s ease,
-        border-color 0.22s ease,
         box-shadow 0.22s ease,
-        transform 0.18s ease !important;
-      cursor: pointer;
+        transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 
-      // Hover — lighter tint + subtle lift
       &:hover {
-        background: color-mix(in srgb, var(--color-primary) 80%, white) !important;
+        background: color-mix(in srgb, var(--color-primary) 78%, #fff) !important;
         box-shadow: 0 8px 24px rgb(0 0 0 / 0.20) !important;
-        transform: translateY(-1px);
-        filter: none !important;
+        transform: translateY(-2px) !important;
       }
 
-      // Active / press — darken + press-in
       &:active {
-        background: color-mix(in srgb, var(--color-primary) 80%, black) !important;
-        transform: translateY(1px) scale(0.99);
-        box-shadow: 0 2px 8px rgb(0 0 0 / 0.15) !important;
+        background: color-mix(in srgb, var(--color-primary) 80%, #000) !important;
+        transform: translateY(1px) scale(0.985) !important;
+        box-shadow: 0 2px 6px rgb(0 0 0 / 0.12) !important;
       }
 
-      // Out-of-stock / disabled
       &[disabled], &.s-button-disabled {
-        background: rgba(0, 0, 0, 0.08) !important;
-        color: rgba(0, 0, 0, 0.30) !important;
-        border-color: transparent !important;
+        background: rgba(0,0,0,0.07) !important;
+        color: rgba(0,0,0,0.28) !important;
         box-shadow: none !important;
         transform: none !important;
         cursor: not-allowed;
       }
     }
 
-    // Shadow DOM — ::part(button) for salla-product-card
+    // Shadow DOM
     &::part(button) {
       width: 100% !important;
       padding: 14px 20px !important;
@@ -760,97 +791,95 @@ salla-product-card.s-product-card-entry .s-product-card-content-footer {
       font-weight: 600;
       font-size: 0.9rem;
       border-radius: 14px !important;
-      border: 2px solid transparent !important;
-      box-shadow: 0 4px 16px rgb(0 0 0 / 0.15);
-      transition: background 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
+      border: none !important;
+      box-shadow: 0 4px 16px rgb(0 0 0 / 0.14);
       cursor: pointer;
+      transition: background 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
     }
-
     &::part(button):hover {
-      background: color-mix(in srgb, var(--color-primary) 80%, white) !important;
+      background: color-mix(in srgb, var(--color-primary) 78%, #fff) !important;
       box-shadow: 0 8px 24px rgb(0 0 0 / 0.20);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
-
     &::part(button):active {
-      background: color-mix(in srgb, var(--color-primary) 80%, black) !important;
-      transform: translateY(1px) scale(0.99);
+      background: color-mix(in srgb, var(--color-primary) 80%, #000) !important;
+      transform: translateY(1px) scale(0.985);
     }
   }
 }
 
-// ── 6. Shadow-on-hover (featured/hero cards) ─────────────────
+// ── 6. Wishlist btn — glass pill over image ──────────────────
+custom-salla-product-card.s-product-card-entry,
+salla-product-card.s-product-card-entry {
+  salla-button.s-product-card-wishlist-btn {
+    position: absolute;
+    z-index: 20;
+    top: 12px;
+    left: 12px;                          // RTL: start = right → btn is opposite
+    [dir="ltr"] & { left: auto; right: 12px; }
+
+    background: rgba(255,255,255,0.75) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.4) !important;
+    border-radius: 50% !important;
+    transition: background 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      background: rgba(255,255,255,0.95) !important;
+      transform: scale(1.12);
+    }
+    &.s-product-card-wishlist-added i { color: #ef4444; }
+  }
+}
+
+// ── 7. Shadow-on-hover ───────────────────────────────────────
 custom-salla-product-card.s-product-card-shadow,
 salla-product-card.s-product-card-shadow {
   &:hover {
     box-shadow:
       0 24px 56px rgb(0 0 0 / 0.14),
       0 4px 16px  rgb(0 0 0 / 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.80) !important;
+      inset 0 1px 0 rgba(255,255,255,0.80) !important;
   }
 }
 
-// ── 7. Minimal (horizontal) card ────────────────────────────
+// ── 8. Minimal (horizontal) card ────────────────────────────
 custom-salla-product-card.s-product-card-minimal.s-product-card-entry,
 salla-product-card.s-product-card-minimal.s-product-card-entry {
   flex-direction: row !important;
   border-radius: 18px !important;
 
   .s-product-card-image {
-    padding: 12px 0 12px 12px;
-    [dir="ltr"] & { padding: 12px 12px 12px 0; }
-    a { border-radius: 12px; }
-    img { width: 96px !important; height: 96px !important; object-fit: cover; }
+    padding: 10px 0 10px 10px !important;
+    a { border-radius: 10px; }
+    img { width: 88px !important; height: 88px !important; object-fit: cover; border-radius: 10px; }
   }
 
-  // Reset side-by-side layout for minimal horizontal cards
   .s-product-card-content {
-    padding: 14px 14px;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    padding: 12px 12px 8px !important;
 
     .s-product-card-content-main {
-      flex-direction: column;
-      align-items: flex-start;
-
-      .s-product-card-content-title {
-        background: transparent;
-        backdrop-filter: none;
-        border: none;
-        padding: 0;
-        border-radius: 0;
-        box-shadow: none;
-      }
+      border-inline-start: none;
+      padding-inline-start: 0;
     }
   }
 }
 
-// ── 8. Full-image card ────────────────────────────────────────
+// ── 9. Full-image card ───────────────────────────────────────
 custom-salla-product-card.s-product-card-full-image.s-product-card-entry,
 salla-product-card.s-product-card-full-image.s-product-card-entry {
-  .s-product-card-image {
-    padding: 0;
-    a { border-radius: 24px 24px 0 0; }
-  }
-
   .s-product-card-content-footer salla-add-product-button {
     .s-button, button {
       background: #fff !important;
       color: var(--color-primary) !important;
-      border-color: rgba(255, 255, 255, 0.4) !important;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.88) !important;
-      }
+      &:hover { background: rgba(255,255,255,0.88) !important; }
     }
-    &::part(button) {
-      background: #fff !important;
-      color: var(--color-primary) !important;
-    }
-    &::part(button):hover {
-      background: rgba(255, 255, 255, 0.88) !important;
-    }
+    &::part(button) { background: #fff !important; color: var(--color-primary) !important; }
+    &::part(button):hover { background: rgba(255,255,255,0.88) !important; }
   }
 }
 
-// ─── end of glass card system ────────────────────────────────
-
-// ─── end of glass card system ────────────────────────────────
+// ─── end of glass card system ─────────────────────────────────
