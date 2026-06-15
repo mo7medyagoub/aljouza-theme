@@ -431,61 +431,74 @@ salla-quantity-input[max='1']{
 
 /* ═══════════════════════════════════════════════════════════
    Glass Product Card — Apple Glossy × Bento Grid
-   Design System: backdrop-blur + inside-stroke + soft shadow
+   Targets: custom-salla-product-card  AND  salla-product-card
+   (salla-products-list / salla-products-slider use the latter)
    ═══════════════════════════════════════════════════════════ */
 
-// ── 1. Main Glass Container ──────────────────────────────────
-custom-salla-product-card.s-product-card-entry {
-  @apply relative flex flex-col overflow-visible;
-
-  // Glassmorphism shell
-  background: rgba(255, 255, 255, 0.58);
+// Shared selector helper — covers both card elements
+%glass-card-shell {
+  background: rgba(255, 255, 255, 0.58) !important;
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-radius: 24px;
-  // Inside stroke — laser-cut glass edge
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
   box-shadow:
     0 8px 32px rgb(0 0 0 / 0.06),
     0 2px 8px  rgb(0 0 0 / 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.70);
+    inset 0 1px 0 rgba(255, 255, 255, 0.70) !important;
   transition:
     transform 0.30s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.30s ease;
+    box-shadow 0.30s ease !important;
+  overflow: hidden;
 
-  // Hover — card lifts
+  // Pass design tokens into Shadow DOM via CSS custom properties
+  --s-card-bg: rgba(255, 255, 255, 0.58);
+  --s-card-radius: 24px;
+  --s-card-border: rgba(255, 255, 255, 0.28);
+  --s-button-radius: 14px;
+  --s-button-bg: var(--color-primary);
+  --s-button-color: #fff;
+}
+
+// ── 1. Glass Container — both elements ──────────────────────
+custom-salla-product-card.s-product-card-entry,
+salla-product-card.s-product-card-entry {
+  @extend %glass-card-shell;
+  @apply relative flex flex-col overflow-hidden;
+
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-4px) !important;
     box-shadow:
       0 20px 48px rgb(0 0 0 / 0.10),
       0 4px 12px  rgb(0 0 0 / 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.80);
+      inset 0 1px 0 rgba(255, 255, 255, 0.80) !important;
   }
 
-  // Dark mode
   .dark & {
-    background: rgba(15, 15, 25, 0.55);
-    border-color: rgba(255, 255, 255, 0.09);
+    background: rgba(15, 15, 25, 0.55) !important;
+    border-color: rgba(255, 255, 255, 0.09) !important;
     box-shadow:
       0 8px 32px rgb(0 0 0 / 0.28),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 
     &:hover {
       box-shadow:
         0 20px 48px rgb(0 0 0 / 0.40),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
     }
   }
 }
 
-// ── 2. Image — Padded "Box Inside Box" ──────────────────────
-custom-salla-product-card.s-product-card-entry .s-product-card-image {
-  @apply relative m-0 overflow-visible;
-  padding: 16px 16px 0; // breathing space top & sides
+// ── 2. Image — "Box Inside Box" with padding ─────────────────
+custom-salla-product-card.s-product-card-entry .s-product-card-image,
+salla-product-card.s-product-card-entry .s-product-card-image {
+  @apply relative m-0;
+  padding: 14px 14px 0;
+  overflow: visible;
 
   a {
     @apply block relative overflow-hidden;
-    border-radius: 16px; // nested harmony: card=24px, image=16px
+    border-radius: 16px; // card=24px → image=16px: nested harmony
 
     img {
       @apply w-full block;
@@ -499,65 +512,71 @@ custom-salla-product-card.s-product-card-entry .s-product-card-image {
   }
 }
 
-// ── 3. Badges — Floating Glass Chips ────────────────────────
-custom-salla-product-card.s-product-card-entry {
+// ── 3. Floating Glass Badge ──────────────────────────────────
+custom-salla-product-card.s-product-card-entry,
+salla-product-card.s-product-card-entry {
 
   .s-product-card-promotion-title {
-    @apply absolute top-3 rtl:right-3 ltr:left-3 z-10;
-    @apply text-xs font-semibold px-3 py-1 rounded-full;
-    background: rgba(255, 255, 255, 0.65) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    color: #1a1a1a;
+    @apply absolute z-10 text-xs font-semibold px-3 py-1 rounded-full;
+    top: 18px;
+    right: 18px;
+
+    [dir="ltr"] & { right: auto; left: 18px; }
+
+    background: rgba(255, 255, 255, 0.72) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.40) !important;
+    color: #1a1a1a !important;
     box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
 
-    // Promo / sale tint
+    // Promo / sale variant — tinted red glass
+    // Note: using attribute selector to avoid PostCSS circular-dependency false-positive
+    &[class~="bg-red-800"],
+    &[class*="promo"],
     &:not(:empty) {
-      background: rgba(239, 68, 68, 0.15) !important;
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #b91c1c;
-    }
-
-    .dark & {
-      background: rgba(15, 15, 25, 0.55) !important;
-      border-color: rgba(255, 255, 255, 0.12);
-      color: #f3f4f6;
+      background: rgba(220, 38, 38, 0.14) !important;
+      border-color: rgba(220, 38, 38, 0.28) !important;
+      color: #b91c1c !important;
     }
   }
 
-  // Sale price badge
+  // Sale price
   .s-product-card-sale-price {
-    h4 { @apply text-red-600 #{!important}; }
+    h4 { color: #dc2626 !important; }
     span { @apply line-through opacity-50 text-sm; }
   }
 
-  // Wishlist button — glass pill floating over image
+  // Wishlist — glass pill
   salla-button.s-product-card-wishlist-btn {
-    @apply absolute top-5 rtl:left-5 ltr:right-5 z-20;
-    background: rgba(255, 255, 255, 0.65);
+    @apply absolute z-20;
+    top: 18px;
+    left: 18px;
+
+    [dir="ltr"] & { left: auto; right: 18px; }
+
+    background: rgba(255, 255, 255, 0.70) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.40) !important;
+    border-radius: 50% !important;
     transition: background 0.2s ease, transform 0.2s ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.90);
+      background: rgba(255, 255, 255, 0.95) !important;
       transform: scale(1.12);
     }
 
-    &.s-product-card-wishlist-added i {
-      @apply text-red-500;
-    }
+    &.s-product-card-wishlist-added i { @apply text-red-500; }
   }
 }
 
 // ── 4. Content — Typography & Breathing Space ───────────────
-custom-salla-product-card.s-product-card-entry .s-product-card-content {
-  @apply flex flex-col flex-1 px-5 pt-4 pb-5 gap-2;
+custom-salla-product-card.s-product-card-entry .s-product-card-content,
+salla-product-card.s-product-card-entry .s-product-card-content {
+  @apply flex flex-col flex-1 gap-2;
+  padding: 14px 16px 16px;
 
-  // Product title
   .s-product-card-content-title {
     @apply font-bold leading-snug;
     color: var(--main-text-color, #231f1e);
@@ -568,51 +587,46 @@ custom-salla-product-card.s-product-card-entry .s-product-card-content {
       color: inherit;
       &:hover { color: var(--color-primary); }
     }
-
-    .dark & a { color: #f9fafb; }
   }
 
-  // Subtitle / description
   .s-product-card-content-subtitle {
     @apply text-sm leading-relaxed;
     opacity: 0.65;
   }
 
-  // Price + rating row
   .s-product-card-content-sub {
     @apply flex items-center justify-between mt-auto pt-2 gap-3;
   }
 
-  // Price value
   .s-product-card-price,
   .s-product-card-starting-price h4 {
     @apply text-lg font-bold;
     color: var(--main-text-color, #231f1e);
-    .dark & { color: #f9fafb; }
   }
 
-  // Rating stars
   .s-product-card-rating {
     @apply flex items-center gap-1 text-sm;
-    .sicon-star2::before { @apply text-amber-400; }
   }
 }
 
-// ── 5. CTA Footer — Solid button cuts through glass ─────────
+// ── 5. CTA Footer — Solid button pierces through glass ──────
+
+// For custom-salla-product-card (light DOM — full CSS access)
 custom-salla-product-card.s-product-card-entry .s-product-card-content-footer {
-  @apply flex items-center justify-between mt-3 gap-3;
+  @apply flex items-center gap-3 mt-2;
 
   salla-add-product-button {
     @apply flex-1;
 
     .s-button {
-      @apply w-full text-sm font-semibold py-2.5 px-4;
-      background: var(--color-primary);
-      color: #fff;
-      border-radius: 14px;
-      border: none;
-      transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      @apply w-full text-sm font-semibold;
+      padding: 10px 16px;
+      background: var(--color-primary) !important;
+      color: #fff !important;
+      border-radius: 14px !important;
+      border: none !important;
       box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+      transition: filter 0.2s, transform 0.2s, box-shadow 0.2s;
 
       &:hover {
         filter: brightness(1.08);
@@ -620,26 +634,64 @@ custom-salla-product-card.s-product-card-entry .s-product-card-content-footer {
         box-shadow: 0 8px 20px rgb(0 0 0 / 0.18);
       }
 
-      // Out-of-stock / disabled
-      &[disabled],
-      &.s-button-disabled {
-        background: rgba(0, 0, 0, 0.08);
-        color: rgba(0, 0, 0, 0.35);
+      &[disabled], &.s-button-disabled {
+        background: rgba(0,0,0,0.08) !important;
+        color: rgba(0,0,0,0.35) !important;
         box-shadow: none;
         transform: none;
         filter: none;
-
-        .dark & {
-          background: rgba(255, 255, 255, 0.08);
-          color: rgba(255, 255, 255, 0.35);
-        }
       }
     }
   }
 }
 
-// ── 6. Shadow-on-hover variant (featured cards) ──────────────
-custom-salla-product-card.s-product-card-shadow {
+// For salla-product-card (Shadow DOM — use ::part() + CSS vars)
+// Salla exposes ::part(button) on salla-add-product-button
+salla-product-card.s-product-card-entry {
+
+  .s-product-card-content-footer {
+    @apply flex items-center gap-3 mt-2;
+  }
+
+  // Pass values through the shadow boundary
+  salla-add-product-button {
+    @apply flex-1;
+
+    // Salla exposes these CSS custom properties for theming
+    --s-button-background: var(--color-primary);
+    --s-button-color: #fff;
+    --s-button-border-radius: 14px;
+    --s-button-border: none;
+    --s-button-padding: 10px 16px;
+    --s-button-font-size: 0.875rem;
+    --s-button-font-weight: 600;
+    --s-button-box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+
+    // ::part() penetrates Shadow DOM directly
+    &::part(button) {
+      background: var(--color-primary) !important;
+      color: #fff !important;
+      border-radius: 14px !important;
+      border: none !important;
+      padding: 10px 16px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      width: 100%;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+      transition: filter 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    &::part(button):hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.18);
+    }
+  }
+}
+
+// ── 6. Shadow-on-hover (featured/hero cards) ─────────────────
+custom-salla-product-card.s-product-card-shadow,
+salla-product-card.s-product-card-shadow {
   &:hover {
     box-shadow:
       0 24px 56px rgb(0 0 0 / 0.14),
@@ -648,36 +700,40 @@ custom-salla-product-card.s-product-card-shadow {
   }
 }
 
-// ── 7. Minimal (horizontal) card tweaks ─────────────────────
-custom-salla-product-card.s-product-card-minimal.s-product-card-entry {
+// ── 7. Minimal (horizontal) card ────────────────────────────
+custom-salla-product-card.s-product-card-minimal.s-product-card-entry,
+salla-product-card.s-product-card-minimal.s-product-card-entry {
   @apply flex-row;
-  border-radius: 18px;
+  border-radius: 18px !important;
 
   .s-product-card-image {
     padding: 12px 0 12px 12px;
-
     [dir="ltr"] & { padding: 12px 12px 12px 0; }
-
     a { border-radius: 12px; }
-
     img { @apply w-24 h-24 object-cover; }
-  }
-
-  .s-product-card-content {
-    @apply pt-4;
   }
 }
 
-// ── 8. Full-image card — overlay button stays white ──────────
-custom-salla-product-card.s-product-card-full-image.s-product-card-entry {
-  .s-product-card-content-footer salla-add-product-button .s-button {
-    @apply bg-white;
-    color: var(--color-primary);
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.18);
+// ── 8. Full-image card — white button on dark overlay ────────
+custom-salla-product-card.s-product-card-full-image.s-product-card-entry,
+salla-product-card.s-product-card-full-image.s-product-card-entry {
+  .s-product-card-image {
+    padding: 0; // no padding — image fills the card top
+    a { border-radius: 24px 24px 0 0; } // match card top radius
+  }
 
-    &:hover {
-      @apply bg-white;
-      filter: brightness(0.97);
+  .s-product-card-content-footer salla-add-product-button {
+    .s-button { // light DOM
+      background: #fff !important;
+      color: var(--color-primary) !important;
+    }
+
+    &::part(button) { // shadow DOM
+      background: #fff !important;
+      color: var(--color-primary) !important;
     }
   }
 }
+
+
+// ─── end of glass card system ────────────────────────────────

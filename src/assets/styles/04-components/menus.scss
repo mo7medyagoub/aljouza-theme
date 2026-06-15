@@ -166,7 +166,7 @@
 
       // Products in mega menus
       .s-product-card-entry {
-        @apply border border-white/20;
+        border: 1px solid rgba(255, 255, 255, 0.20);
       }
 
       .btn {
@@ -174,8 +174,8 @@
       }
 
       li.mega-menu .container {
-        ul { @apply p-0 m-0 border-none; }
-        > div { @apply hidden; }
+        ul { padding: 0; margin: 0; border: none; }
+        > div { display: none; }
       }
     }
 
@@ -203,34 +203,52 @@
 
     // ── More dropdown ────────────────────────────────────
     #more-menu-dropdown {
-      @apply flex-shrink-0;
+      flex-shrink: 0;
 
-      > a { @apply whitespace-nowrap; }
+      > a { white-space: nowrap; }
 
       > .sub-menu {
         max-height: 70vh;
         overflow-y: auto;
 
+        // Nested sub-menus collapse inline (no fly-out)
         .sub-menu {
-          @apply static opacity-0 invisible transform-none shadow-none border-0
-                 m-0 p-0 bg-transparent max-h-0 overflow-hidden
-                 transition-[max-height,opacity,visibility] duration-200 ease-in;
+          position: static;
+          opacity: 0;
+          visibility: hidden;
+          transform: none;
+          box-shadow: none;
+          border: 0;
+          margin: 0;
+          padding: 0;
+          background: transparent;
+          max-height: 0;
+          overflow: hidden;
+          transition-property: max-height, opacity, visibility;
+          transition-timing-function: ease-in;
           transition-duration: 250ms, 200ms, 200ms;
         }
 
         li.has-children {
-          @apply relative;
+          position: relative;
 
-          > a { @apply justify-between; }
+          > a { justify-content: space-between; }
 
           &:hover > .sub-menu,
           &:focus-within > .sub-menu {
-            @apply opacity-100 visible max-h-[1000px];
+            opacity: 1;
+            visibility: visible;
+            max-height: 1000px;
           }
         }
 
         .sub-menu > ul {
-          @apply rtl:pr-4 ltr:pl-4;
+          padding-right: 1rem; // rtl
+
+          [dir="ltr"] & {
+            padding-right: 0;
+            padding-left: 1rem;
+          }
         }
       }
     }
