@@ -1,49 +1,119 @@
 
 .store-footer {
-  @apply relative bg-darker text-white mt-8 sm:mt-16;
+  @apply relative mt-8 sm:mt-16;
+  // No background on the outer shell — the glass card carries its own
+  a {
+    @apply transition-opacity hover:opacity-75;
+  }
+}
 
-  a{
+/* ── Bento Wrapper ────────────────────────────── */
+.footer-bento-wrapper {
+  @apply px-[2.5%] pb-6;
+}
+
+/* ── Glass Card ───────────────────────────────── */
+.footer-glass-card {
+  @apply rounded-3xl overflow-hidden;
+
+  // Glassmorphism — Design System
+  background: rgba(15, 15, 25, 0.72);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 8px 30px rgb(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  color: #fff;
+
+  // Light footer variant
+  .footer-is-light & {
+    background: rgba(248, 249, 251, 0.85);
+    border-color: rgba(0, 0, 0, 0.07);
+    box-shadow: 0 8px 30px rgb(0,0,0,0.06);
+    color: #374151;
+  }
+
+  a {
     @apply transition-opacity hover:opacity-75;
   }
 
-  &__inner{
-    @apply bg-dark py-8 lg:py-16 border-b border-dashed border-b-white/10;
-  }  
-
-  h3{
+  h3 {
     @apply text-lg font-bold mb-3 lg:mb-5;
   }
+}
 
-  .social-link {
-    @apply border rounded-full w-8 h-8 justify-center flex items-center hover:opacity-75 transition duration-300 text-sm
-  }
+/* ── Bento Grid ───────────────────────────────── */
+.footer-bento-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-8;
+}
 
-  .contact-social{
-    @apply mt-5 pt-5 border-t border-white/10;
+/* ── Individual Bento Cells ───────────────────── */
+.footer-bento-cell {
+  @apply relative rounded-2xl p-6;
 
-    ul {
-      @apply mb-0;
-    }
+  // Subtle inner glass separation between cells
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
   }
 
   .footer-is-light & {
-    @apply bg-gray-50 text-gray-700;
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.05);
 
-    .store-footer__inner {
-      @apply bg-gray-100 border-b-gray-200;
-    }
-
-    .social-link {
-      @apply border-gray-300;
-    }
-
-    .contact-social{
-      @apply border-gray-100;
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
     }
   }
 }
 
+/* Brand cell spans wider */
+.footer-bento-brand {
+  @apply md:col-span-3 lg:col-span-2;
+}
 
-.copyright-text p{
-  @apply text-gray-700;
+/* Apps cell — subtle alignment */
+.footer-bento-apps {
+  @apply flex items-start justify-start lg:justify-end;
+}
+
+/* Social links */
+.social-link {
+  @apply border rounded-full w-8 h-8 justify-center flex items-center hover:opacity-75 transition duration-300 text-sm;
+  border-color: rgba(255, 255, 255, 0.2);
+
+  .footer-is-light & {
+    @apply border-gray-300;
+  }
+}
+
+.contact-social {
+  @apply mt-5 pt-5;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  ul {
+    @apply mb-0;
+  }
+
+  .footer-is-light & {
+    border-top-color: rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* ── Copyright Bar ────────────────────────────── */
+.footer-copyright-bar {
+  @apply flex flex-col md:flex-row items-center justify-between py-4 px-8 text-center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  .footer-is-light & {
+    border-top-color: rgba(0, 0, 0, 0.07);
+  }
+}
+
+.copyright-text p {
+  @apply opacity-60;
 }
